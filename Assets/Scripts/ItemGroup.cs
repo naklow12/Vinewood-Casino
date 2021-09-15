@@ -50,6 +50,22 @@ public class ItemGroup : MonoBehaviour
         moveItemToTop(items[0].gameObj.transform); //Send the item to the top
     }
 
+    public void setItemSprites(bool isMoving)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (isMoving)
+            {
+                items[i].spriteRenderer.sprite = itemsManager.itemSpritesMoving[items[i].id];
+            }
+            else
+            {
+                items[i].spriteRenderer.sprite = itemsManager.itemSprites[items[i].id];
+            }
+        }
+        
+    }
+
     private void Update()
     {
         if (Mathf.Abs(transform.localPosition.y) > (items[itemNum-2].gameObj.transform.localPosition.y) + itemsManager.spacingBetweenItems) //Calculating 2 item size down item (unseen) by scroll size.

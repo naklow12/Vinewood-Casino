@@ -10,13 +10,18 @@ public class ItemsManager : MonoBehaviour
     public int itemNum;
     private bool[] lockRotations;
     public float spacingBetweenItems;
-    private const float DEFAULT_SCROLL_SPEED = 15f;
+    private const float DEFAULT_SCROLL_SPEED = 20f;
     private float[] scrollSpeeds;
 
     private void Start()
     {
         lockRotations = new bool[itemGroups.Length]; //Control for slots.
         scrollSpeeds = new float[itemGroups.Length]; //Scroll speeds for slots.
+
+        for (int i = 0; i < lockRotations.Length; i++)
+        {
+            lockRotations[i] = true;
+        }
         for (int i = 0; i < scrollSpeeds.Length; i++)
         {
             scrollSpeeds[i] = DEFAULT_SCROLL_SPEED; //We may update scrolls later.
@@ -35,6 +40,17 @@ public class ItemsManager : MonoBehaviour
         {
             if (!lockRotations[i])
                 itemGroups[i].position -= new Vector3(0f, scrollSpeeds[i] * Time.deltaTime, 0f);
+        }
+    }
+
+    public IEnumerator UnlockRotations()
+    {
+        for (int i = 0; i < lockRotations.Length; i++)
+        {
+            lockRotations[i] = false; //Starts moving
+            itemGroups[i].GetComponent<ItemGroup>().setItemSprites(true); //Calls moving sprites
+            float rand = Random.Range(0.1f, 0.4f);
+            yield return new WaitForSeconds(rand);
         }
     }
 
