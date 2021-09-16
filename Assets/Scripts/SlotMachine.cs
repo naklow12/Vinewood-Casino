@@ -10,6 +10,9 @@ public class SlotMachine : MonoBehaviour
     public void runMachine()
     {
         if (!isMachineRunning)
+        {
             StartCoroutine(itemsManager.UnlockRotations());
+            isMachineRunning = true;
+        }
     }
 }
