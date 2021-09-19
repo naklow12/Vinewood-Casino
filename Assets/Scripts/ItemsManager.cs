@@ -7,16 +7,23 @@ public class ItemsManager : MonoBehaviour
     public Sprite[] itemSprites;
     public Sprite[] itemSpritesMoving;
     [SerializeField] private Transform[] itemGroups;
+    private Vector3[] itemGroupsFirstLocalPos;
     public int itemNum;
     private bool[] lockRotations;
     public float spacingBetweenItems;
     private const float DEFAULT_SCROLL_SPEED = 20f;
-    private float[] scrollSpeeds;
+    public float[] scrollSpeeds;
 
     private void Start()
     {
         lockRotations = new bool[itemGroups.Length]; //Control for slots.
         scrollSpeeds = new float[itemGroups.Length]; //Scroll speeds for slots.
+        itemGroupsFirstLocalPos = new Vector3[itemGroups.Length]; //First positions of item groups.
+
+        for (int i = 0; i < itemGroups.Length; i++)
+        {
+            itemGroupsFirstLocalPos[i] = itemGroups[i].localPosition;
+        }
 
         for (int i = 0; i < lockRotations.Length; i++)
         {
@@ -40,6 +47,8 @@ public class ItemsManager : MonoBehaviour
         {
             if (!lockRotations[i])
                 itemGroups[i].position -= new Vector3(0f, scrollSpeeds[i] * Time.deltaTime, 0f);
+            
+
         }
     }
 
@@ -54,22 +63,37 @@ public class ItemsManager : MonoBehaviour
         }
     }
 
-    public IEnumerator LockRotations(int targetItemId)
+    public IEnumerator LockRotations(int[] targetItemIds)
     {
 
         for (int i = 0; i < lockRotations.Length; i++)
         {
             ItemGroup itemGroup = itemGroups[i].GetComponent<ItemGroup>();
-            yield return new WaitUntil(() => itemGroup.getCurrentItemNum() == targetItemId);
             lockRotations[i] = true; //Locks rotation
+            float delay = 0;
+            if (i == 2)
+            {
+                StartCoroutine(speedDownScrollSpeed());
+                delay = 1f;
+            }
+            StartCoroutine(itemGroup.rotateToTarget(itemGroups[i], targetItemIds[i], itemGroup, scrollSpeeds,delay));
             itemGroup.setItemSprites(false);
-            float rand = Random.Range(0.1f, 0.4f);
+            float rand = Random.Range(0.6f, 1.2f);
             yield return new WaitForSeconds(rand);
         }
     }
 
-    public void lockFreeRotationAndPick(int num)
+    private IEnumerator speedDownScrollSpeed()
     {
-        
+        while (scrollSpeeds[2] >= 2f)
+        {
+            Debug.Log("LOWER SCROLL SPEED = " + scrollSpeeds[2]);
+            scrollSpeeds[2] -= 10f * Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+
+        }
     }
+    
+
 }

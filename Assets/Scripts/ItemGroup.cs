@@ -8,12 +8,14 @@ public class ItemGroup : MonoBehaviour
     private int itemNum;
     [SerializeField] private GameObject itemGo;
     [SerializeField] ItemsManager itemsManager;
+    private Vector3[] firstItemsLocalPositions;
     private int moveCounter;
 
     private void Start()
     {
         items = new List<Item>();
         itemNum = itemsManager.itemNum;
+        firstItemsLocalPositions = new Vector3[itemNum];
         Transform itemTrans = itemGo.transform;
         itemTrans.localPosition = new Vector3(itemTrans.localPosition.x, 0f, itemTrans.localPosition.z);
         generateItems();
@@ -25,10 +27,19 @@ public class ItemGroup : MonoBehaviour
         {
             GameObject go = Instantiate(itemGo, transform);
             go.transform.localPosition = new Vector3(0f, go.transform.localPosition.y + (i * itemsManager.spacingBetweenItems), 0f);
+            firstItemsLocalPositions[i] = go.transform.localPosition;
             go.SetActive(true);
             Item item = new Item(i, go, go.GetComponent<SpriteRenderer>());
             items.Add(item);
             item.setSprite(itemsManager.itemSprites[i]);
+        }
+    }
+
+    public void resetItemLocations()
+    {
+        for (int i = 0; i < firstItemsLocalPositions.Length; i++)
+        {
+            items[i].gameObj.transform.localPosition = firstItemsLocalPositions[i];
         }
     }
 
@@ -69,6 +80,37 @@ public class ItemGroup : MonoBehaviour
     public int getCurrentItemNum()
     {
         return items[3].id;
+    }
+
+    public Transform getItemTransform(int itemId)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].id == itemId)
+            {
+                return items[i].gameObj.transform;
+            }
+        }
+        return null;
+    }
+
+    public IEnumerator rotateToTarget(Transform itemGroupTrans, int targetId, ItemGroup itemGroup, float[] scrollSpeed, float delay)
+    {
+        Transform targetItem = itemGroup.getItemTransform(targetId);
+        bool targetLocked = false;
+        float diff = 50f;
+        while (((diff > (0.0025f * scrollSpeed[2]) || diff < 0) && !targetLocked) || delay > 0)
+        {
+            itemGroupTrans.position -= new Vector3(0f, scrollSpeed[2] * Time.deltaTime, 0f);
+            diff = itemGroupTrans.localPosition.y + targetItem.localPosition.y;
+            if(diff < (0.01f * scrollSpeed[2]) && diff > 0 && delay < 0)
+            {
+                itemGroupTrans.localPosition = new Vector3(itemGroupTrans.localPosition.x, -targetItem.localPosition.y, itemGroupTrans.localPosition.z);
+                targetLocked = true;
+            }
+            delay -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     private void Update()
