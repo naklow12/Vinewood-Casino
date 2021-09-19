@@ -541,6 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemsManager: {fileID: 671240742}
+  possibilityCalculator: {fileID: 834855474}
 --- !u!114 &834855474
 MonoBehaviour:
   m_ObjectHideFlags: 0

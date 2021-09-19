@@ -54,4 +54,22 @@ public class ItemsManager : MonoBehaviour
         }
     }
 
+    public IEnumerator LockRotations(int targetItemId)
+    {
+
+        for (int i = 0; i < lockRotations.Length; i++)
+        {
+            ItemGroup itemGroup = itemGroups[i].GetComponent<ItemGroup>();
+            yield return new WaitUntil(() => itemGroup.getCurrentItemNum() == targetItemId);
+            lockRotations[i] = true; //Locks rotation
+            itemGroup.setItemSprites(false);
+            float rand = Random.Range(0.1f, 0.4f);
+            yield return new WaitForSeconds(rand);
+        }
+    }
+
+    public void lockFreeRotationAndPick(int num)
+    {
+        
+    }
 }

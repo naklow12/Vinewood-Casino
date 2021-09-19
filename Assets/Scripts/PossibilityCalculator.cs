@@ -4,36 +4,45 @@ using UnityEngine;
 
 public class PossibilityCalculator : MonoBehaviour
 {
-    int totalPossibility;
+    private int totalPossibility;
+    private int[] historyData;
+    private Possibility[] livePossibilityArr;
 
     void Start()
     {
+        Scheduler.schedule();
+        ScheduleDataset dataSet = ScheduleFile.LoadSave();
+        if(dataSet != null)
+            historyData = dataSet.scheduleDataArr;
+        livePossibilityArr = Possibilities.possibilityArr; //I kept the original to use it later.
         generatePossibilities();
-        int[] order = getRandomResult();
     }
 
     private void generatePossibilities()
     {
-        for (int i = 0; i < Possibilities.possibilityArr.Length; i++)
+        for (int i = 0; i < livePossibilityArr.Length; i++)
         {
-            int possibilityRate = Possibilities.possibilityArr[i].possibilityRate;
+            int possibilityRate = livePossibilityArr[i].possibilityRate;
             totalPossibility += possibilityRate;
-            Possibilities.possibilityArr[i].possibilityRate = totalPossibility;
+            livePossibilityArr[i].possibilityRate = totalPossibility;
         }
     }
 
-    private int[] getRandomResult()
+    public int[] getRandomResult()
     {
         Random.InitState(System.DateTime.Now.Millisecond);
         int rand = Random.Range(0, totalPossibility);
         int arrayNum = -1;
-        for (int i = 0; i < Possibilities.possibilityArr.Length; i++)
+        for (int i = 0; i < livePossibilityArr.Length; i++)
         {
-            if (Possibilities.possibilityArr[i].possibilityRate <= rand)
+            if (livePossibilityArr[i].possibilityRate <= rand)
                 arrayNum = i;
         }
-        return Possibilities.possibilityArr[arrayNum+1].order;
+
+        return livePossibilityArr[arrayNum+1].order;
     }
+
+
 
 
 }

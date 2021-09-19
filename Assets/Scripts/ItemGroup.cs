@@ -66,6 +66,11 @@ public class ItemGroup : MonoBehaviour
         
     }
 
+    public int getCurrentItemNum()
+    {
+        return items[3].id;
+    }
+
     private void Update()
     {
         if (Mathf.Abs(transform.localPosition.y) > (items[itemNum-2].gameObj.transform.localPosition.y) + itemsManager.spacingBetweenItems) //Calculating 2 item size down item (unseen) by scroll size.
