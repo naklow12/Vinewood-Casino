@@ -94,16 +94,16 @@ public class ItemGroup : MonoBehaviour
         return null;
     }
 
-    public IEnumerator rotateToTarget(Transform itemGroupTrans, int targetId, ItemGroup itemGroup, float[] scrollSpeed, float delay)
+    public IEnumerator rotateToTarget(Transform itemGroupTrans, int targetId, ItemGroup itemGroup, float[] scrollSpeed, float delay, int slotNum)
     {
         Transform targetItem = itemGroup.getItemTransform(targetId);
         bool targetLocked = false;
         float diff = 50f;
-        while (((diff > (0.0025f * scrollSpeed[2]) || diff < 0) && !targetLocked) || delay > 0)
+        while (((diff > (0.0025f * scrollSpeed[slotNum]) || diff < 0) && !targetLocked) || delay > 0)
         {
-            itemGroupTrans.position -= new Vector3(0f, scrollSpeed[2] * Time.deltaTime, 0f);
+            itemGroupTrans.position -= new Vector3(0f, scrollSpeed[slotNum] * Time.deltaTime, 0f);
             diff = itemGroupTrans.localPosition.y + targetItem.localPosition.y;
-            if(diff < (0.01f * scrollSpeed[2]) && diff > 0 && delay < 0)
+            if(diff < (0.01f * scrollSpeed[slotNum]) && diff > 0 && delay < 0)
             {
                 itemGroupTrans.localPosition = new Vector3(itemGroupTrans.localPosition.x, -targetItem.localPosition.y, itemGroupTrans.localPosition.z);
                 targetLocked = true;
@@ -111,6 +111,11 @@ public class ItemGroup : MonoBehaviour
             delay -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+        if (slotNum == 2)
+        {
+            itemsManager.turnCompleted();
+        }
+
     }
 
     private void Update()

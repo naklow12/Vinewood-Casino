@@ -6,9 +6,11 @@ public class SlotMachine : MonoBehaviour
 {
     [SerializeField] private ItemsManager itemsManager;
     [SerializeField] private PossibilityCalculator possibilityCalculator;
-    private bool isMachineRunning;
+    [SerializeField] private ParticleSystem[] coinAnimations;
+    public bool isMachineRunning;
     private const float stopCount = 2f;
     public int[] result;
+    
 
     public void runMachine()
     {
@@ -17,7 +19,7 @@ public class SlotMachine : MonoBehaviour
             StartCoroutine(itemsManager.UnlockRotations());
             result = possibilityCalculator.getNextResult();
             PlayerPrefs.SetInt("spinCount",PlayerPrefs.GetInt("spinCount")+1);
-            Debug.Log("Res 1 = " + result[0] + " Res 2 = " + result[1] + " Res 3 = " + result[2]);
+            Debug.Log("Res1 = " + result[0] + " Res2 = " + result[1] + " Res3 = " + result[2]);
             isMachineRunning = true;
             StartCoroutine(stopMachine());
         }
@@ -27,5 +29,17 @@ public class SlotMachine : MonoBehaviour
     {
         yield return new WaitForSeconds(stopCount);
         StartCoroutine(itemsManager.LockRotations(result));
+    }
+
+    public void callCoinAnimation()
+    {
+        if (result[0] == result[1] && result[1] == result[2])
+        {
+            for (int i = 0; i < coinAnimations.Length; i++)
+            {
+                if (!coinAnimations[i].isPlaying)
+                    coinAnimations[i].Play();
+            }
+        }
     }
 }

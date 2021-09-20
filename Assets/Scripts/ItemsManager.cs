@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class ItemsManager : MonoBehaviour
 {
+    private const float DEFAULT_SCROLL_SPEED = 20f;
+
     public Sprite[] itemSprites;
     public Sprite[] itemSpritesMoving;
     [SerializeField] private Transform[] itemGroups;
+    [SerializeField] private SlotMachine slotMachine;
     private Vector3[] itemGroupsFirstLocalPos;
     public int itemNum;
     private bool[] lockRotations;
     public float spacingBetweenItems;
-    private const float DEFAULT_SCROLL_SPEED = 20f;
     public float[] scrollSpeeds;
 
     private void Start()
@@ -47,19 +49,26 @@ public class ItemsManager : MonoBehaviour
         {
             if (!lockRotations[i])
                 itemGroups[i].position -= new Vector3(0f, scrollSpeeds[i] * Time.deltaTime, 0f);
-            
-
         }
     }
 
     public IEnumerator UnlockRotations()
     {
+        resetSpeeds();
         for (int i = 0; i < lockRotations.Length; i++)
         {
             lockRotations[i] = false; //Starts moving
             itemGroups[i].GetComponent<ItemGroup>().setItemSprites(true); //Calls moving sprites
             float rand = Random.Range(0.1f, 0.4f);
             yield return new WaitForSeconds(rand);
+        }
+    }
+
+    private void resetSpeeds()
+    {
+        for (int i = 0; i < scrollSpeeds.Length; i++)
+        {
+            scrollSpeeds[i] = DEFAULT_SCROLL_SPEED;
         }
     }
 
@@ -71,27 +80,31 @@ public class ItemsManager : MonoBehaviour
             ItemGroup itemGroup = itemGroups[i].GetComponent<ItemGroup>();
             lockRotations[i] = true; //Locks rotation
             float delay = 0;
-            if (i == 2)
+            if (i == 2 && slotMachine.result[0] == slotMachine.result[1])
             {
                 StartCoroutine(speedDownScrollSpeed());
                 delay = 1f;
             }
-            StartCoroutine(itemGroup.rotateToTarget(itemGroups[i], targetItemIds[i], itemGroup, scrollSpeeds,delay));
+            StartCoroutine(itemGroup.rotateToTarget(itemGroups[i], targetItemIds[i], itemGroup, scrollSpeeds,delay,i)); 
             itemGroup.setItemSprites(false);
             float rand = Random.Range(0.6f, 1.2f);
             yield return new WaitForSeconds(rand);
         }
     }
 
+    public void turnCompleted()
+    {
+        slotMachine.callCoinAnimation();
+        slotMachine.isMachineRunning = false;
+    }
+
     private IEnumerator speedDownScrollSpeed()
     {
-        while (scrollSpeeds[2] >= 2f)
+        while (scrollSpeeds[2] >= 3.5f && slotMachine.isMachineRunning)
         {
-            Debug.Log("LOWER SCROLL SPEED = " + scrollSpeeds[2]);
             scrollSpeeds[2] -= 10f * Time.deltaTime;
 
             yield return new WaitForEndOfFrame();
-
         }
     }
     
