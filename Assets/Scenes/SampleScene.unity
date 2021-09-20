@@ -279,7 +279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6167040743367846263, guid: 0894cdc45af00e44f85bf43b2cbd6db0, type: 3}
       propertyPath: lengthInSec
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6167040743367846263, guid: 0894cdc45af00e44f85bf43b2cbd6db0, type: 3}
       propertyPath: playOnAwake
@@ -657,6 +657,7 @@ GameObject:
   - component: {fileID: 834855471}
   - component: {fileID: 834855473}
   - component: {fileID: 834855474}
+  - component: {fileID: 834855475}
   m_Layer: 0
   m_Name: SlotMachine
   m_TagString: Untagged
@@ -748,9 +749,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemsManager: {fileID: 671240742}
   possibilityCalculator: {fileID: 834855474}
-  coinAnimations:
-  - {fileID: 1668991250}
-  - {fileID: 1953029116}
+  coinAnimation: {fileID: 834855475}
   isMachineRunning: 0
   result: 
 --- !u!114 &834855474
@@ -765,7 +764,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e388ff8d756c2b24cb697d261a9a51ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkData: 1
+  checkScheduledData: 0
+--- !u!114 &834855475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834855470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82a99b6bad3f7ca419c179ce428bb68d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinAnimations:
+  - {fileID: 1668991250}
+  - {fileID: 1953029116}
 --- !u!1 &969878666
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,11 +6,10 @@ public class SlotMachine : MonoBehaviour
 {
     [SerializeField] private ItemsManager itemsManager;
     [SerializeField] private PossibilityCalculator possibilityCalculator;
-    [SerializeField] private ParticleSystem[] coinAnimations;
+    [SerializeField] private CoinAnimation coinAnimation;
     public bool isMachineRunning;
     private const float stopCount = 2f;
     public int[] result;
-    
 
     public void runMachine()
     {
@@ -33,13 +32,7 @@ public class SlotMachine : MonoBehaviour
 
     public void callCoinAnimation()
     {
-        if (result[0] == result[1] && result[1] == result[2])
-        {
-            for (int i = 0; i < coinAnimations.Length; i++)
-            {
-                if (!coinAnimations[i].isPlaying)
-                    coinAnimations[i].Play();
-            }
-        }
+        coinAnimation.callCoinAnimation(result);
     }
+   
 }
